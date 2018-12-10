@@ -4,46 +4,65 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \todo{1. Indicar muy brevemente las ventajas de la animación esqueletal alineadas con los objetivos. 2. Indicar porque la técnica clasica no se puede utilizar. La extendemos para anatomía interna. 3. No usamos las técnicas clásicas porque no tiene en cueta la anatomía interna. %2. No entiendo la seguna parte de la frase
 }
-El objetivo es ser capaz de modificar toda la anatomía interna y externa de un modelo anatómico virtual usando una representación superficial. \new{En el mundo de los gráficos por computador, tradicionalmente, se ha utilizado la animación esqueletal para transformar la superficie de modelos articulados. Aunque permite una animación de modelos complejos en tiempo interactivo, no tiene en cuenta la relación espacial entre tejidos. Por esta razón, se ha diseñado un cauce basado en la animación esqueletal que se extiende para el uso de representaciones volumétricas.} 
+\new{En este apartado, se propone un conjunto de técnicas capaces de animar la anatomía interna y externa de un paciente virtual. El cauce de animación, que aquí se describe, fue diseñado para trabajar con \acs{B-rep}s de los distintos tejidos, aunque dada la flexibilidad del enfoque planteado, posteriormente se extendió a otro tipo de representaciones (ver \ref{XXXXX Sección donde ponga ejemplos}). }\todo{
+%mete la referencia. Lo he contado por que tú lo haces pero no se si es el mejor sito. 
+Tienes que ir soltando las ideas una a una, no todas a la vez. }
+%
+%\del{El objetivo es ser capaz de modificar toda la anatomía interna y externa de un modelo anatómico virtual usando una representación superficial. En el mundo de los gráficos por computador, tradicionalmente, se ha utilizado la animación esqueletal para \new{animar modelos articulados}. ????????????????????????????????? Aunque permite una animación de modelos complejos en tiempo interactivo, no tiene en cuenta la relación espacial entre tejidos. Por esta razón, se ha diseñado un cauce basado en la animación esqueletal que se extiende para el uso de representaciones volumétricas.????}
+\todo{%Lo reescribo yo!. Todo esto es muy confuso. 
+No hay un hilo conductor ni una idea clara que vender} 
+
+En el mundo de los gráficos por computador, tradicionalmente, se ha utilizado la animación esqueletal para animar modelos articulados, dado que produce resultados visualmente plausibles y son muy eficientes desde el punto de vista computacional. Este conjunto de técnicas se basan en asignar un esqueleto virtual a la representación poligonal de la superficie de un modelo 3D. Destacar que un esqueleto virtual no es más que un conjunto jerárquico de huesos virtuales donde los puntos de rotación de cada hueso se define localmente en el sistema de referencia del padre. 
+La idea que subyace bajo esta aproximación es que el número de grado de libertad del esqueleto virtual es muy inferior al número de grados de libertad de malla superficial. Este tipo de técnicas no puede aplicarse directamente al problema que se ha enunciado en la sección anterior, puesto el proceso de animación requiere de la intervención de uno o varios artistas en la preparación de los datos. El resultado final dependerá en gran medida de las destrezas de los artistas implicados en el proceso. 
+
+Tal y como se comenta en la sección \ref{art:animation}, en la bibliografía existen distintas técnicas que pretenden automatizar algunas de las etapas de este cauce, pero no están diseñadas para lidiar con modelos que contengan estructuras anatómicas internas. En este trabajo de tesis, se propone como adaptar el cauce de la animación esqueletal clásica de forma que se pueda aplicar a modelos anatómicos de forma automática. 
 %\del{En lugar de utilizar las técnicas clásicas de animación esqueletal, se ha propuesto una nueva manera novedosa de animar anatomías de personajes de manera eficiente, ya que para animar todos los tejidos de forma separada implicaría que habría que realizar las etapas de la animación para cada tejido de manera independiente y que no se podría asegurar que se generaran auto colisiones entre ellos.}
 
-\new{La idea principal que hay detrás del algoritmo propuesto} es de calcular un campo de desplazamientos continuo %\todo{si no es continuo todo lo que dices a continuación no sirve}
-en el interior del paciente virtual y utilizarlo para transformar las estructuras internas. Esto permite deformar los tejidos de forma independiente y, aun así, garantizar que estos se muevan solidariamente, asegurando que no se produzcan colisiones.%\del{ solidaria sin necesidad de realizar cálculos independientes y asegurar de esta manera que no se producirá nuevas colisiones.} 
+La idea principal que hay detrás del algoritmo propuesto es  calcular un campo de desplazamientos continuo a partir del movimiento de los hueso
+%\todo{si no es continuo todo lo que dices a continuación no sirve}
+en el interior del paciente virtual y utilizarlo para transformar sus estructuras internas. Esto permite deformar los tejidos de forma independiente y, aun así, garantizar que estos se muevan solidariamente, asegurando que no se produzcan colisiones y/o autocolisines. %\del{ solidaria sin necesidad de realizar cálculos independientes y asegurar de esta manera que no se producirá nuevas colisiones.} 
 %\todo{cuentalo luego}\del{Además, esta forma de trabajar permite no sólo animar representaciones superficiales, sino que es factible animar modelos volumétricos.}
-\todo{Relata la idea principal. Crear el despalazamiento a partir del movimiento de los huesos. 2. Expliar la diferencia enter hueso virtual y tejido oseo. 3. Una vez acabado el parrafo lee toda esta into para que no haya cosas duplicadas. }
+%\todo{Relata la idea principal. Crear el despalazamiento a partir del movimiento de los huesos. 2. Expliar la diferencia enter hueso virtual y tejido oseo. 3. Una vez acabado el parrafo lee toda esta into para que no haya cosas duplicadas. }
+%
+De cara a calcular el citado campo de desplazamientos a partir del movimiento del tejido óseo, se discretizará el interior del paciente mediante una malla \emph{Lagrangiana}. Después, se calculará la influencia de cada hueso sobre el movimiento de los vértices de la malla \emph{Lagrangiana} y esta se utilizará para transformar las representaciones superficiales de los distintos tejidos. 
+%\del{La deformación del campo de desplazamientos vendrá dada por el movimiento del tejido óseo. La influencia de uno o un grupo de huesos reales definirá el movimiento del campo y en consecuencia, el del resto de los tejidos mapeados con la representación volumétrica generada a partir de la piel. }
+%\todo{Aaron cuida más la redacción. O me pasas cosas más trabajadas o no vamos a acabar nunca!!!.}
 
-\new{La deformación del campo de desplazamientos vendrá dada por el movimiento del tejido óseo. La influencia de uno o un grupo de huesos reales definirá el movimiento del campo y en consecuencia, el del resto de los tejidos mapeados con la representación volumétrica generada a partir de la piel. }
+Al igual que en la animación esqueletal clásica, está técnica requiere construir un esqueleto virtual en el que definir las transformaciones que se aplicarán al modelo articulado. Destacar que en el caso que aquí se presenta, esta estructura puede calcularse a partir del tejido óseo del paciente virtual.
+%\del{El movimiento del tejido óseo será dirigido por los huesos virtuales. Estos serán creados y ajustados teniendo en cuenta la anatomía real del paciente virtual, construyendo un esqueleto virtual específico. }
 
-\new{El movimiento del tejido óseo será dirigido por los huesos virtuales. Estos serán creados y ajustados teniendo en cuenta la anatomía real del paciente virtual, construyendo un esqueleto virtual específico. }
 
+\todo{1. todo automático menos la selección de la pose. 2. Indicar que la animación tradicional confía en el artista en muchos paso. Marcos 2: Este párrafo no explica lo que te pedía. Eso esta explicado antes. Si quieres hablar de la animación hazlo en el paso correspondiente. Pero reescribe este parrafo no esta muy bien. }
 
-\todo{1. todo automático menos la selección de la pose. 2. Indicar que la animación tradicional confía en el artista en muchos paso}
-\new{En la industria, es el animador el que se encarga exclusivamente de los movimientos de los personajes, confiando en sus habilidades. Otro de los objetivos propuestos para este algoritmo es permitir a un médico dirija y supervise la deformación del paciente virtual de manera interactiva. A su vez, puede guardar posturas interesantes que permitan animar los modelos automáticamente en un futuro.
-Se ha buscado en la bibliografía aquellas técnicas automáticas que puedan ser útiles como se puede leer en el estado del arte (sec. \ref{art:anatomy}) y se han adaptado para ser incorporadas en este método con el objetivo de reducir la interacción del usuario a la selección de pose.
+\new{
+Por último, se permite al usuario seleccionar la pose del modelo de forma interactiva. Dentro del contexto de esta tesis, el objetivo es permitir a un un profesional médico que supervise la correcta deformación de los tejidos, con la finalidad de conseguir posiciones útiles para el entrenamiento. Adicionalmente, se pueden almacenar posturas predefinidas para automatizar el proceso para futuros modelos anatómicos.
+}
+
+%\del{En la industria, es el animador el que se encarga exclusivamente de los movimientos de los personajes, confiando en sus habilidades???????? """"y del rigging y del pesado""""!!!!!!!!. Otro de los objetivos propuestos para este algoritmo es permitir a un médico dirija y supervise la deformación del paciente virtual de manera interactiva. A su vez, puede guardar posturas interesantes que permitan animar los modelos automáticamente en un futuro.
+%Se ha buscado en la bibliografía aquellas técnicas automáticas que puedan ser útiles como se puede leer en el estado del arte (sec. \ref{art:anatomy}) y se han adaptado para ser incorporadas en este método con el objetivo de reducir la interacción del usuario a la selección de pose.""Me cuesta enteder que idea quieres trasmitir""} 
 %o dejará la elección de la postura a un profesional médico que supervise la correcta deformación de los tejidos de forma interactiva.
-} 
+
 
 %Como se ha especificado en la sección \ref{posing:req}, esta técnica ha sido diseñada para funcionar con anatomías incompletas siendo sólo obligatorio que la piel y los huesos estén correctamente identificados. \todo{1. Esta frase no se como se enlaza con la anterior. 2. repites la idea de etapas automaticas que ya habías explicado en el paso anterior.}\todo{aqui te quedaste}%El algoritmo propuesto sigue la línea del cauce clásico de animación esqueletal, modificando aquellas etapas con el objetivo de que sea automático y permita modelos incompletos.
 
 %\del{Por tanto, el algoritmo propuestose puede dividir en las siguientes etapas}. 
-\new{A continuación se detallan las etapas en las que se divide el algoritmo} (ver Fig. \ref{fig:Resumen}). \new{Tal y como puede comprobarse, muchas de las etapas, se inspiran en la animación esqueletal tradicional}:
-\todo{Déjalo en ingles, pero en el estado del arte, cuando se hable de rigging, mete un nota al pie donde digas lo que es. Hecho }
+A continuación se detallan las etapas en las que se divide el algoritmo (ver Fig. \ref{fig:Resumen}). Tal y como puede comprobarse, muchas de las etapas, se inspiran en la animación esqueletal tradicional:
+%\todo{Déjalo en ingles, pero en el estado del arte, cuando se hable de rigging, mete un nota al pie donde digas lo que es. Hecho }
 \begin{itemize}
 
 	\item \emph{Rigging}: %\todo{Se que has traducido del ingles, pero tio!!! que tu hablas castellano} \del{Un esqueleto virtual predefinido \del{es} ajustado a la anatomía del personaje.}
-	\new{En la primera etapa, se adapta un esqueleto virtual a la anatomía del paciente virtual.} El algoritmo usa el tejido óseo para calcular el centro de rotación de cada articulación (sec. \ref{art:rigging}) del hueso virtual.
+	En la primera etapa, se adapta un esqueleto virtual a la anatomía del paciente virtual. El algoritmo usa el tejido óseo para calcular el centro de rotación de cada articulación del hueso virtual.
 	
      \item \emph{Volumetrización}: En esta etapa, se genera una malla de tetraedros que volumetriza el interior del modelo. Esta malla se genera a partir de la de la piel y los huesos del paciente virtual y servirá para definir un campo de desplazamientos continuo, que se asociará con el movimiento de los huesos.
-\item \emph{Pesado}: A continuación, se calcula de manera automática la influencia del tejido óseo a cada vértice de la malla de tetraedros. 
-\item \emph{Mapeado}: Todos los demás tejidos son asignados a los tetraedros de la malla volumétrica. 
-\item \emph{Selección de pose}: En esta etapa, el movimiento de los huesos virtuales es transferido a la malla de tetraedros usando una técnica estándar de \emph{skinning}: \ac{LBS}, \ac{DQS} o \ac{COR}. 
-%\todo{Esto no es la primera vez que te lo digo. Cuando utilices la pasiva que suene natural!!!}
-Después, el movimiento de estos tetraedros se transferirá aplicado a los tejidos del resto del modelo. Esta etapa puede ser interactiva dejando al usuario elegir la pose, o puede usarse otras técnicas de animación (p.ej. \ac{MoCap}) con el objetivo de que la etapa se ejecute de manera automática.%\todo{La cinemática inversa no es automática, es interactiva. }
-\item \emph{Optimización}: De forma opcional,
-\new{ el usuario podrá refinar el resultado obtenido utilizando un método que intente preservar el volumen del modelo anatómico.}
-\todo{La frase es rara. Creo que con la intención  no suena bien.}
-\del{De forma opcional, se permite al usuario refinar el resultado obtenido con \new{la finalidad} \del{la intención }de preservar el volumen del modelo anatómico.}
 
+    \item \emph{Pesado}: A continuación, se calcula de manera automática la influencia del tejido óseo sobre cada vértice de la malla de tetraedros. 
+    
+    \item \emph{Mapeado}: Todos los demás tejidos son asignados a los tetraedros de la malla volumétrica. 
+
+    \item \emph{Selección de pose}: En esta etapa, el movimiento de los huesos virtuales es transferido a la malla de tetraedros usando una técnica estándar de \emph{skinning}: \ac{LBS}, \ac{DQS} o \ac{COR}. 
+    Después, el movimiento de estos tetraedros se transferirá \new{a los vértices del resto de tejidos} \del{aplicado a los tejidos del resto del modelo}\todo{Hay algo raro}. Esta etapa puede ser interactiva dejando al usuario elegir la pose, o puede usarse otras técnicas de animación (p.ej. \ac{MoCap}) con el objetivo de que la etapa se ejecute de manera automática.%\todo{La cinemática inversa no es automática, es interactiva. }
+
+    \item \emph{Optimización}: De forma opcional, el usuario podrá refinar el resultado obtenido utilizando un método que intenta preservar el volumen del modelo anatómico.
 \end{itemize}
 
 %\todo{rehacer imagen resumen}
@@ -58,7 +77,7 @@ Después, el movimiento de estos tetraedros se transferirá aplicado a los tejid
 
 %
 
-A continuación, se describirá detalladamente cada una de las etapas por separado, remarcando aquellas innovaciones y adaptaciones hechas específicamente para esta solución.
+A continuación, se describirá detalladamente cada una de las etapas por separado, remarcando aquellas innovaciones y adaptaciones hechas específicamente en el contexto de este trabajo.
 
 
 
@@ -66,29 +85,34 @@ A continuación, se describirá detalladamente cada una de las etapas por separa
 \subsection{Rigging}
 \label{posing:rigging}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-De manera similar a los huesos reales, un esqueleto virtual permite el movimiento del personaje que se quiere animar. El esqueleto virtual se representa como un conjunto jerarquizado de huesos virtuales conectados entre sí. El movimiento de cada hueso virtual está definido por una rotación teniendo en cuenta el centro de rotación de la articulación. Este movimiento puede ser fácilmente ampliable a otros tipos de movimientos más complejos discutidos en la sección \ref{art:rigging}. \new{De la misma manera, se han mencionado varias formas de crear o ajustar un esqueleto virtual a un modelo de entrada.}
+De manera similar a los huesos reales, un esqueleto virtual permite el movimiento del personaje que se quiere animar. El esqueleto virtual esta formado por un conjunto jerarquizado de huesos y su posición en reposo se define a partir del sistema de referencia del hueso padre. De esta forma la transformación que se aplica a cada huso se expresa locamente al hueso. % \del{Este movimiento puede ser fácilmente ampliable a otros tipos de movimientos más complejos discutidos en la sección \ref{art:rigging}}. 
 
-\new{En esta etapa, se ha optado por crear un procedimiento por el cual se ajusta un esqueleto virtual predefinido al tejido óseo del paciente virtual. Se utiliza la propia representación superficial del tejido para definir un centro de rotación y los ejes cartesianos para cada articulación.}
-\todo{
+
+%\del{De la misma manera, se han mencionado varias formas de crear o ajustar un esqueleto virtual a un modelo de entrada.}
+
+En la bibliografía pueden encontrarse distintas técnicas que permiten automatizar la creación del esqueleto virtual (ver sec. \ref{art:rigging}). Lamentablemente, la mayoría de ellas requieren estar completamente contenidas en los modelos que se desean animar. En el sistema propuesto, todos los pacientes virtuales provienen de registrar un paciente tipo \new{utilizando un modelo de referencia}.  De esta forma, se creará un esqueleto virtual tipo y será el algoritmo de registro el encargado de adaptarlo a cada paciente.  %\del{se ha optado por crear un procedimiento por el cual se ajusta un esqueleto virtual predefinido al tejido óseo del paciente virtual. Se utiliza la propia representación superficial del tejido para definir un centro de rotación y los %\todo{muy muy confuso.}
+%\todo{
 %1. Explica que en la bibliografia existen técnicas que crean en el esqueleto y otras que ajustan uno existente. 
-2. En Rasimas los pacientes se generan registrando datos reales en el modelo del Zygote. 
-3. Redacta lo que viene a  continuación para que este bien ligado con esto. 
-4. Tienes que encuenta que etiquetas el modelo en reposo. %Recuerda el documento que nos pasó antoine. De hecho puedes poner este docuemento en el apendice y citarlo. 
-De verdad falta mucha información}
+%2. En Rasimas los pacientes se generan registrando datos reales en el modelo del Zygote. 
+%3. Redacta lo que viene a  continuación para que este bien ligado con esto. 
+%4. Tienes que encuenta que etiquetas el modelo en reposo. %Recuerda el documento que nos pasó antoine. De hecho puedes poner este docuemento en el apendice y citarlo. 
+%De verdad falta mucha información}
 
-\new{Para ello, se han identificado manualmente las regiones significativas de cada hueso o conjunto de huesos, a partir del cual se calculará el sistea local de referencia del hueso virtual. En la figura \ref{fig:humero}, se pueden apreciar las distintas regiones seleccionadas para una muestra de diferentes huesos. Las zonas rojas sirven para calcular el centroide que se usará como punto de rotación para los huesos virtual. Con este punto y los centroides obtenidos de las áreas de color azul y verde se puede estimar dos vectores ortogonales: un vector vertical entre la zona roja y verde; y otro vertical entre la zona verde y azul. El tercer eje se calcula mediante el producto vectorial de ambos. Estos vectores servirán para definir el sistema local de referencia para esa articulación.}
+Con este objetivo, se han identificado manualmente, en el modelo de referencia, las regiones significativas de cada hueso o conjunto de huesos, a partir del cual se calculará el sistema local de referencia del hueso virtual. En la figura \ref{fig:humero}, se pueden apreciar las distintas regiones seleccionadas para una muestra de diferentes huesos. Las zonas rojas sirven para calcular el centroide que se usará como punto de rotación. Con este punto y los centroides obtenidos de las áreas de color azul y verde se puede estimar dos vectores ortogonales: un vector vertical entre la zona roja y verde; y otro horizontal entre la zona verde y azul. El tercer eje se calcula mediante el producto vectorial de ambos. Estos vectores servirán para definir el sistema local de referencia para esa articulación. Para hacer estos cálculos más robustos, el algoritmo considerará (cuando sea posible) regiones grandes, minimizando los posibles defectos de un mal registro. Este proceso es específico para cada hueso virtual y puede ser fácilmente ampliable a otros tipo de huesos o agrupaciones de huesos. La explicación \new{sobre} que zonas se han identificado en este sistema se podrá consultar en el anexo \ref{anexo:rigging}. 
+%
+%\del{Estas zonas etiquetadas se identifican en el modelo anatómico de entrada.} 
+Inicialmente, en el proyecto \ac{RASimAs}, se utilizó como modelo de referencia a  \emph{ZygoteBody}$^{TM}$. Pero se puede asumir que el trabajo realizado puede extenderse a otros modelos de entada de la herramienta \ac{ITGVPH}. 
 
-\new{Estas zonas etiquetadas se identifican en el modelo anatómico de entrada. Inicialmente, en el proyecto \ac{RASimAs}, se utiliza el modelo \emph{ZygoteBody}$^{TM}$, pero se puede asumir que el modelo de entrada en la herramienta \ac{ITGVPH} se puedan identificar las mismas regiones.} Además, para hacer estos cálculos más robustos, el algoritmo considerará (cuando sea posible) regiones más grandes, minimizando los posibles defectos de un mal registro. Este proceso es específico para cada hueso virtual y puede ser fácilmente ampliable para todo tipo de huesos. La explicación de cada hueso que se ha utilizado en la presente tesis se podrá consultar en el anexo \ref{anexo:rigging}. 
-\todo{Creo que tienes que mejorar como enlazas las ideas en este parrafo.}
-Esta etapa concreta ha sido desarrollada por \emph{Antonie Serruier}, miembro del proyecto \ac{RASimAs}, en colaboración con el autor de esta tesis basada en anteriores trabajos \cite{QUIJANO20131703}.
-\todo{revisar los colores de las fotos}
-\todo{Aumenta el tamño de todas las imágnes}
 
-\todo{indica el código de colores}
+Esta etapa concreta ha sido desarrollada en colaboración con el Dr. \emph{Antonie Serruier}, miembro del proyecto \ac{RASimAs}. \del{y se ha basada en anteriores trabajos \cite{QUIJANO20131703}}. \todo{No entiendo esta idea final. Aaron: La idea de como sacar el centro de rotación esta explicada en ese paper}
+%\todo{revisar los colores de las fotos}
+%\todo{Aumenta el tamño de todas las imágnes}
+
+%\todo{indica el código de colores}
 \begin{figure}
    \centering
     \includegraphics[width=0.95\textwidth]{IMG/rigshoulder.png}%[width=0.8\textwidth]
-    \caption{La imagen muestra los huesos del modelo de referencia antes de registrar los datos del paciente. Las áreas coloreadas se utilizan para calcular el sistema de referencia de cada articulación. \new{El centro de rotación se calcula a partir de las zonas rojas. Dos vectores ortogonales se calculan con las zonas azul y verde. El tercero se calcula en base a los dos anteriores.}}
+    \caption{La imagen muestra los huesos del modelo de referencia antes de registrar los datos del paciente. Las áreas coloreadas se utilizan para calcular el sistema de referencia de cada articulación. El centro de rotación se calcula a partir de las zonas rojas. Dos vectores ortogonales se calculan con las zonas azul y verde. El tercer vector ortogonal se calcula en base a los dos anteriores.}
 \label{fig:humero}
 \end{figure}
 
@@ -98,18 +122,25 @@ Esta etapa concreta ha sido desarrollada por \emph{Antonie Serruier}, miembro de
 \label{posing:volumetrizacion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-Como se ha introducido anteriormente, \new{el objetivo es crear un campo de desplazamientos continuo que permita mover la anatomía interna del paciente virtual}. El algoritmo discretiza el interior del modelo utilizando la piel y el tejido oseo como referencia, obteniendo una malla volumétrica formada por tetraedros. Esta malla de tetraedros es una pieza clave del algoritmo que se utilizará para calcular el citado campo de desplazamientos. La siguiente etapa (sec. \ref{posing:Pesado}) calculará la influencia del movimiento de cada hueso en los vértices de los tetraedros, de forma que el movimiento de los huesos afecte a los vértices de la malla volumétrica. El campo de desplazamientos se obtendrá de forma implícita interpolando el desplazamiento de los vértices en el interior de los tetraedros, mediante el uso de coordenadas baricéntricas. \new{Esta malla será fundamental en las siguientes etapas.}
+Como se ha introducido anteriormente, el objetivo es crear un campo de desplazamientos continuo que permita mover la anatomía interna del paciente virtual. El algoritmo discretiza el interior del modelo utilizando la piel y el tejido óseo como referencia, obteniendo una malla volumétrica formada por tetraedros. %\del{Esta malla de tetraedros es una pieza clave del algoritmo que se utilizará para calcular el citado campo de desplazamientos.}
+La siguiente etapa (sec. \ref{posing:Pesado}) calculará la influencia del movimiento de cada hueso en los vértices de los tetraedros, de forma que el movimiento de los huesos afecte a los vértices de la malla volumétrica. El campo de desplazamientos se obtendrá de forma implícita interpolando el desplazamiento de los vértices en el interior de los tetraedros, mediante el uso de coordenadas baricéntricas. %\del{Esta malla será fundamental en las siguientes etapas.}
 %\del{Después, esta malla será donde se calcule el campo de desplazamiento (Sec. \ref{posing:Poses}). También, el campo de desplazamientos guiará la animación del modelo virtual gracias al cálculo del mapeado entre los tetraedros generados en esta etapa y los distintos tejidos (Sec. \ref{posing:Mapeado}).}  \todo{Estas ultimas frases son muy raras, sobretodo la final. Explicas cosas que no son necesarias para esta etapa. }
 
 
 %\todo{No te das cuenta de confusa que es esta frase. Lo que quieres decir es que no calculas directamente la malla de tetraedros, primero creas una imagen volumétrica. Reescribe}
 %\del{En lugar de proceder al proceso de discretización con las representaciones superficiales de los tejidos, se ha optado \new{por} generar una representación volumétrica a partir de la piel y los huesos como paso intermedio para controlar el proceso de discretización y mejorar la robustez del algoritmo. Se genera una imagen en tres dimensiones compuesta por \emph{vóxeles}\footnote{unidad cúbica mínima para representaciones volumétricas} que permitirá simplificar el etiquetado aquellos \emph{vóxeles} que \del{colisionan con} \new{pertenezcan a} la piel y los huesos.}\todo{simplificar?}
-\new{ La malla volumétrica no se realiza de forma directa, sino que se ha decidido general una representación superficial a partir de la piel y los huesos como paso intermedio para controlar el proceso de discretización y mejorar la robustez del algoritmo. Se genera una imagen en tres dimensiones compuesta por} \emph{vóxeles}\footnote{unidad cúbica mínima para representaciones volumétricas}\new{  que permitirá simplificar el etiquetado aquellos que pertenezcan a la piel y los huesos. }
+La malla volumétrica no se calcula directamente a partir de la representación superficial de los tejidos del paciente. En su lugar, se construye una imagen tridimensional en la que se etiquetan los \emph{vóxeles}\footnote{unidad cúbica mínima para representaciones volumétricas} que pertenecen a los huesos y la piel que pertenecen del paciente virtual. Este paso intermedio permite controlar el proceso de discretización y mejora su robustez.
+%\del{La malla volumétrica no se realiza de forma directa, sino que se ha decidido general una representación superficial a partir de la piel y los huesos como paso intermedio para controlar el proceso de discretización y mejorar la robustez del algoritmo. Se genera una imagen en tres dimensiones compuesta por \emph{vóxeles}}\del{  que permitirá simplificar el etiquetado aquellos que pertenezcan a la piel y los huesos. }
+El tamaño de la imagen 3D depende de los tamaños del \emph{vóxel} y de la caja contenedor del modelo. Cuanto más grande sea dicha caja y el tamaño del \emph{vóxel} más pequeño, más detalle tendrá la imagen 3D resultante. \new{Sin embargo, el aumento del número de \emph{vóxeles} implicará un mayor consumo de tiempo y memoria.}\del{Sin embargo, hay que tener en cuenta que a más detalle, más tiempo de cálculo y más consumo de memoria será necesario.}
+\todo{sigue sin gustarme la frase. Piensala más}
+En esta tesis se ha establecido un tamaño de \emph{vóxel} que permita tener como máximo una caja contenedora de tamaño 250x700x120 \emph{vóxeles}, en todos los modelos probados.
 
-El tamaño de la imagen 3D depende de los tamaños del \emph{vóxel} y de la caja contenedor del modelo. Cuanto más grande sea dicha caja y el tamaño del \emph{vóxel} más pequeño, más detalle tendrá la imagen 3D resultante. \new{Sin embargo, hay que tener en cuenta que a más detalle, más tiempo de cálculo y más consumo de memoria será necesario.}%\todo{revisa la frase anterior}
-En esta tesis se ha establecido un tamaño de \emph{vóxel} que permita tener como máximo una caja contenedora de tamaño 250x700x120.
-
-El proceso de \emph{voxelización} empieza etiquetando aquellos \emph{vóxeles} que coinciden con la piel (Fig. \ref{fig:voxelizacion}.a). Después, los \emph{vóxeles} interiores se etiquetan usando la técnica descrita en \cite{SUZUKI20031} (Fig. \ref{fig:voxelizacion}.b).\todo{expresalo de otra manera}\new{ En este punto, se ha decido añadir una etapa donde aquellos \emph{vóxeles} que pertenecen a la superficie de la piel vuelven a estar no etiquetados \del{como vacíos}}(Fig. \ref{fig:voxelizacion}.c). Este paso se ha introducido para mejorar la robustez del método en zonas que podrían quedar interconectadas por su proximidad. En el apartado de resultados se mostrará la motivación de esta etapa. Finalmente, se procede a etiquetar los \emph{vóxeles} que corresponden a cada hueso como se muestra en la imagen (Fig. \ref{fig:voxelizacion}.d), de forma similar al procedimiento que se utiliza con la piel. 
+El proceso de \emph{voxelización} empieza etiquetando aquellos \emph{vóxeles} que coinciden con la piel (Fig. \ref{fig:voxelizacion}.a). Después, los \emph{vóxeles} interiores se etiquetan usando la técnica descrita en \cite{SUZUKI20031} (Fig. \ref{fig:voxelizacion}.b).
+%\todo{expresalo de otra manera}
+En este punto, se ha decido añadir una etapa en la que se eliminan los \emph{vóxeles} marcados como piel (Fig. \ref{fig:voxelizacion}.c). %\del{donde aquellos \emph{vóxeles} que pertenecen a la superficie de la piel vuelven a estar no etiquetados \del{como vacíos}}. 
+Este paso se ha introducido para mejorar la robustez del método en zonas que podrían quedar interconectadas por su proximidad. 
+%\todo{No pongas resultados pon la referencia!}
+En el apartado \ref{posing:result} se mostrará como esta etapa mejora el resultado final y evita problemas importantes. Finalmente, se procede a etiquetar los \emph{vóxeles} que corresponden a cada hueso como se muestra en la imagen (Fig. \ref{fig:voxelizacion}.d), de forma similar al procedimiento que se siguió con la piel. 
 %
 %\todo{puedes hacer la imagenes más grandes. No hay limite de espacio!}
 %
@@ -121,8 +152,11 @@ El proceso de \emph{voxelización} empieza etiquetando aquellos \emph{vóxeles} 
 \label{fig:voxelizacion}
 \end{figure}
 
-\todo{me gusta esta separación. Usala en el texto. Fase 1 voxelización, fase tetraedrización}
-Una vez que la imagen 3D ha sido construida, se utiliza para crear una malla de tetraedros asociada. Para la tetraedrización se utiliza el algoritmo \ac{RDT} \cite{jamin:hal-00796052}. Este algoritmo permite generar mallas de tetraedros multidominio a partir de mallas superficiales o imágenes 3D. A la hora de configurar el algoritmo, se debe alcanzar un compromiso entre precisión y eficiencia (ver anexo \ref{anexo:criterios}). Se ha configurado para incrementar los tetraedros alrededor de la piel y la superficie de los huesos. Para la realización de esta tesis, se ha conseguido mantener el número de los tetraedros por debajo de $3.5\times 10^6$ y el número de vértices por debajo de $8 \times 10^5$. Destacar que la malla de tetraedros se etiquetada usando los tejidos óseos y la piel (Fig. \ref{fig:tetra}).
+%\todo{me gusta esta separación. Usala en el texto. Fase 1 voxelización, fase tetraedrización}
+Una vez se ha construido la imagen 3D, se utiliza para crear una malla de tetraedros. Para la tetraedrización se utiliza el algoritmo \ac{RDT} \cite{jamin:hal-00796052}. Este algoritmo permite generar mallas de tetraedros multidominio a partir de mallas superficiales o imágenes 3D. A la hora de configurar el algoritmo, se debe alcanzar un compromiso entre precisión y eficiencia (ver anexo \ref{anexo:criterios}). En este caso, se ha configurado para incrementar los tetraedros alrededor de la piel y la superficie de los huesos. \new{De esta forma, se permite obtener más detalle en zonas intermedias donde se resolverá la transición de pesos explicado en la siguiente sección.}
+\todo{Explica porque}
+
+Para la realización de esta tesis, se ha conseguido mantener el número de los tetraedros por debajo de $3.5\times 10^6$ y el número de vértices por debajo de $8 \times 10^5$. Destacar que en violeta se muestran los tetraedros sin etiqueta. El restos de colores muestran los distintos huesos del modelo (Fig. \ref{fig:tetra}).
 %
 \begin{figure}[th]
    \centering
@@ -135,40 +169,69 @@ Una vez que la imagen 3D ha sido construida, se utiliza para crear una malla de 
 \subsection{Pesado}
 \label{posing:Pesado}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo{Esta sección es muy floja. Tienes que trbajarla mucho más!}
+
 %
-Como se ha introducido en el estado del arte (ver sección \ref{art:pesado}), la etapa de pesado es donde se calcula como influye el movimiento de cada hueso sobre los vértices de la malla superficial. \new{Es habitual encontrar que las técnicas citadas están orientadas al pesado en mallas superficiales. Sin embargo, como se están tratando con mallas de tetraedros, hay que adaptar estos modelos a la problemática presente. }
+Como se ha introducido en el estado del arte (ver sección \ref{art:pesado}), la etapa de pesado es donde se calcula como influye el movimiento de cada hueso sobre los vértices de la malla \new{contenedora}. \new{Es habitual encontrar que las técnicas citadas estan orientadas a utilizar mallas superficiales y utilizan una recta como representación del hueso virtual para calcular su influencia en los vértices.
+Sin embargo, en el algoritmo propuesto se esta trabajando con mallas de tetraedros y los huesos virtuales estarán representados por la discretización volumétrica del tejido óseo. Por tanto, se necesitará adaptar estos métodos para poder ser utilizados en el método propuesto.}\del{Es habitual encontrar que las técnicas citadas están orientadas al pesado en mallas superficiales. Sin embargo, como se están tratando con mallas de tetraedros, hay que adaptar estos modelos a la problemática presente. }
+
+%
 %\todo{En el paso anterior no se calculó un campo de desplazamientos. Volumetrizó el espacio interior. El pesado calcula la influencia de los huesos sobre los vértices. Esta influencia se usa para mover los vértices siguiendo el movimiento de los huesos. Una ve que se han movido los vértices se calcula el campo de desplazamientos en el interior de cada tetraedro interpolando mediante coordenadas baricéntricas el desplazamiento de los vértices. En resumen la frase es confusa cambiala}.
-\new{A su vez, tampoco se desea calcular la influencia del esqueleto virtual, sino calcular como se propagan la influencia de los tejidos óseos sobre los demás vértices de la malla de tetraedros.}
+\del{A su vez, tampoco se desea calcular la influencia del esqueleto virtual, sino calcular como se propagan la influencia de los tejidos óseos sobre los demás vértices de la malla de tetraedros.}
+\todo{Piensa un poco más estas dos frases}
+\todo{No entiendo bien la idea}
 %\del{Así pues, en este caso se va a calcular la influencia de los huesos reales y no de los huesos virtuales a los vértices de la malla de tetraedros y no de los vértices de los distintos tejidos}
 %\todo{Separa las ideas. La primera diferencia es que no se usa el esquelto virtual, sino que se propaga la influencia del tejido oseo. Diferencia 2, no se calcula la influencia sobre el resto de tejidos sino que se calcuala la influencia sobre los vertices de la malla volumetrica}. 
 
+%\todo{Esto es muy raro. Hablas de condiciones que no están en esta este capitulo. No se si se va enteder. Por favor, cuando lo reescribas dedicale tiempo.}
 
-Al igual que los algoritmos de pesado clásicos, los pesos calculados para los vértices de los tetraedros tienen que cumplir las mismas condiciones que se citan en \ref{cond1} y \ref{cond2}.
-\emph{Baran y Popovi\'{c}} en \cite{Baran:2007} presentan un trabajo que realiza el pesado de forma automática y crea transiciones suaves entre articulaciones. Ellos proponen usar la ecuación de difusión de calor suponiendo que la influencia de los huesos se propaga a través del modelo al igual que haría el calor. %Existen actualmente técnicas para calcular el pesado de forma más efectiva \cite{Jacobson:2011} comentadas en el estado del arte, pero se basan en el mismo principio\todo{que no se basen en el mismo principio no es suficiente para descartarlas}. 
+Se ha tomado como punto de partida la técnica presentada en \cite{Baran:2007}. \emph{Baran y Popovi\'{c}} describen un proceso que realiza el pesado de forma automática, creando transiciones suaves de pesos entre articulaciones. En su trabajo proponen usar la ecuación de difusión de calor suponiendo que la influencia de los huesos se propaga a través del modelo al igual que haría la temperatura. Para ello, utilizan la ecuación del calor \ref{diffusion} intercambiando temperatura por pesos.  
+%\todo{Transiciones de que. Desarrolla un poco más las cosas}
+%\todo{Tanto calor es un poco repetitivo.}
+
+%Existen actualmente técnicas para calcular el pesado de forma más efectiva \cite{Jacobson:2011} comentadas en el estado del arte, pero se basan en el mismo principio\todo{que no se basen en el mismo principio no es suficiente para descartarlas}. 
 %Tomando en cuenta la idea original de \emph{Baran y Popovi\'{c}}\cite{Baran:2007}, se ha modificado\todo{que se ha modificado} para adaptarla al algoritmo propuesto debido a que su aplicación no es directa\todo{reescribe la frase}.
 
-\new{Esta técnica esta diseñada para mallas superficiales y, por tanto, es necesario que se adapte para poder aplicar la propagación de la influencia del tejido óseo al resto de los tetraedros de la malla volumétrica.
+
+
 %\todo{1. Rehaz la pasiba.}. 
-En \cite{Baran:2007}, se resuelve la ecuación del calor \ref{diffusion}donde se hace una analogía entre temperatura y el peso de los vértices. }
+%En \cite{Baran:2007}, se resuelve la ecuación del calor donde se hace una analogía entre temperatura y el peso de los vértices. 
+%\todo{Cual es la analogía concreta. Ademas del la difusion del calor hablas en el parrafo anterior. Tienes que hilar mejor las cosas. }
+\todo{Cuando metes una ecuación tienes que explicar los términos. }
+
 \begin{equation}
 \label{diffusion}
  \frac{\delta T}{ \delta t} = k \Delta T + q_{G}.
 \end{equation}
-\todo{revisar}
 
-\new{Asumiendo que no hay fuentes de calor, se ha formulado el caso estático para cada hueso, esto es igualar a cero el operador laplaciano. Esto da lugar a la ecuación \ref{ourdiffusion}}:
+\new{donde $\frac{\delta T}{ \delta t}$ representa el diferencial de la temperatura respecto al tiempo, $k \Delta T$ la diferencia de temperaturas en la geometría y $q_{G}$ los generadores de calor.}
+%\todo{revisar}
+
+\new{Esta técnica esta diseñada para mallas superficiales y, por tanto, es necesario que se adapte para poder aplicar la propagación de la influencia del tejido óseo al resto de los tetraedros de la malla volumétrica. A continuación se detallan los cambios realizados.}
+
+\new{En primer lugar se puede asumir que no hay fuentes de calor y, por tanto, se ha formulado el caso estático para cada hueso. Esto es igualar a cero el operador laplaciano, dando lugar a la ecuación \ref{ourdiffusion}}:
+%\todo{No esta bien explicado y la redacción es rara.}
 \begin{equation}
 \label{ourdiffusion}
-\Delta W_j = 0.
+\Delta \mathbf{W_j} = 0.
 \end{equation}
+donde $\mathbf{W_j}$ representa el vector de pesos del hueso $j$. Se resuelve el caso estacionario para cada hueso. \cite{Lewis2004}.
+
+
+\todo{No explicas los términos de la ecuación. antes de hablar de Wj yo hablaria de Wi,j. Por otro lado recuerda que los vectores debería ir en negrita. Deberías intidicar que resuelves la equación en el caso estacionario. Es uno de los motivos de que se simplifique. Cita el libro que uilizamos  }
 
 %De esta forma, se obtiene un campo de pesos $W_j$  para cada hueso donde el tejido óseo correspondiente a $j$  propaga su influencia (temperatura 1) en el que se está resolviendo e influencia nula (temperatura 0) para el resto de huesos.  %de forma que la solución propuesta hace que la energía laplaciana sea estacionaria. Además, esta adaptación asegura una suavidad de orden superior\todo{la frase no suena bien}. 
-\todo{reescribe la frase. Da la sensación que no entiendes que escribes.: flojeo un poco en esta parte sobre todo al escribirla 1 Reformulamos el problemas haciendo cero el laplaciano. Esto es equivalente a minizar la energia. }
+\todo{reescribe la frase. Da la sensación que no entiendes que escribes.: flojeo un poco en esta parte sobre todo al escribirla 1 Reformulamos el problemas haciendo cero el laplaciano. Esto es equivalente a minizar la energia. 
+Tienes que hacer un esfuerzo: 
+Ver enlace en comentarios
+%https://es.wikipedia.org/wiki/Operador_laplaciano 
+}
 %
 
 
 %Con el objetivo de calcular  de un hueso $j$, se resuelve el caso estacionario definido en la ecuación \ref{diffusion}.%\todo{Tengo la impresion de que sueltas frases sin preocuparte de que sigan un orden logico. Esto está muy flojo.}
-\new{Para calcular los pesos $W_j$, esta ecuación se resuelve para cada hueso $j$, donde se imponen las siguientes condiciones de contorno: se considera que el valor $W_j$ es $1$ (influencia) dentro de los tetraedros etiquetados como $j$; y el valor es $W_j$ es $0$ (influencia 0) dentro de los tetraedros etiquetados como $k$, donde $k$ es cualquier otro hueso que no es $j$. En el equilibrio estático, el resto de vértices tienen que verificar la ecuación \ref{ourdiffusion}. El problema se define de la siguiente manera:}
+\todo{Lo hablamos en persona. No me gusta la notación}
+A continuación, para calcular los pesos $W_j$, esta ecuación se resuelve para cada hueso $j$, donde se imponen las siguientes condiciones de contorno: se considera que el valor $W_j$ es $1$ (influencia) dentro de los tetraedros etiquetados como $j$; y el valor es $W_j$ es $0$ (influencia 0) dentro de los tetraedros etiquetados como $k$, donde $k$ es cualquier otro hueso que no es $j$. En el equilibrio estático, el resto de vértices tienen que verificar la ecuación \ref{ourdiffusion}. El problema se define de la siguiente manera:
 
 \begin{equation}
 \label{problema1}
@@ -198,7 +261,11 @@ W(x)_{j} = 0\ \;
 %
 donde $\mathbf{A}$ es la matriz de coeficientes del sistema, el vector $\mathbf{b}_j$ depende de las condiciones de contorno del hueso  $j$ y $\mathbf{W}_j$ es un vector que  contiene los pesos  $w_{i,j}$ para cada vértice sin etiquetar $i$. \new{$\mathbf{A}$ es constante para todos los huesos ya que solo depende de la discretización del dominio. Como esta matriz es simétrica y definida positiva, permite calcular la descomposición de \emph{Cholesky} de esta matriz una única vez y usarla para resolver el sistema lineal de cada hueso.}
 
-Es importante mencionar que esta formulación cumple con las restricciones que se imponen en \ref{cond1} y \ref{cond2}. \new{Primero, se puede asegurar que el valor máximo y mínimo sólo se alcanzan en los huesos (influencia $0$ o $1$). Segundo, si se considera \ref{min1}  y  \ref{min2}, donde  $n$ es el número de huesos, el sistema \ref{min3} equivale a calcular los pesos donde todos los puntos del contorno tendrán un valor de $1$. Además, como el máximo y el mínimo valor es alcanzado solamente en el contorno, dará lugar a que el valor de la suma de los pesos $\mathbf{W}$ será $1$, probando la condición \ref{cond2}.}
+\new{Al igual que los algoritmos de pesado clásicos, los pesos calculados para los vértices de los tetraedros deberán que cumplir las mismas condiciones que se citan en \ref{cond1} y \ref{cond2} en la sección \ref{art:pesado}}. %Es importante mencionar que esta formulación cumple con las restricciones que se imponen en \ref{cond1} y \ref{cond2}. 
+\new{Primero, se puede asegurar que el valor máximo y mínimo sólo se alcanzan en los huesos (influencia $0$ o $1$).
+Segundo, si se considera \ref{min1}  y  \ref{min2}, donde  $n$ es el número de huesos, el sistema \ref{min3} equivale a calcular los pesos donde todos los puntos del contorno tendrán un valor de $1$. Además, como el máximo y el mínimo valor es alcanzado solamente en el contorno, dará lugar a que el valor de la suma de los pesos $\mathbf{W}$ será $1$, probando la condición \ref{cond2}.}
+\todo{Creo que mezclas cosas}
+
 
 \begin{equation}
 \label{min1}
@@ -213,34 +280,47 @@ W = \sum^{n}_{j=0} W_{j}
 A W = b
 \end{equation}
 
-Existen alternativas como se puede leer en la sección \ref{art:pesado}, donde \cite{Jacobson:2011} presentaba una técnica que permitía crear puntos de anclaje y cajas contenedoras para controlar la animación. Esto daba lugar a resolver un problema disperso y cuadrático para imponer las restricciones. Sin embargo, la solución propuesta en esta sección solo requiere resolver un sistema de ecuaciones lineales. %\nuevo{revisar Marcos. No suena bien. Pero no te lo puedo reescribir todo.}
+En trabajos más actuales, \cite{Jacobson:2011}, donde se presentaba una técnica que mejoraba la presentada en \cite{Baran:2007} que permitía crear puntos de anclaje y cajas contenedoras para controlar la animación del modelo. 
+%\todo{lo que has antes de la coma no esta bien enlazado con lo que hay después.}
+El inconveniente principal es la complejidad añadida al tener que resolver un problema disperso y cuadrático para imponer las restricciones. Sin embargo, la solución propuesta en esta sección solo requiere resolver un sistema de ecuaciones lineales. 
  %Por otra parte,  mientras que la técnica
 
 
+\todo{comprueba la sintaxis, parece cherokee }
  \begin{figure}[h]
    \centering
-\includegraphics[width=0.49\textwidth]{IMG/weights.png}
-     \caption{\new{Vértices de la malla de tetraedros que muestran la influencia de cada hueso o conjunto de huesos. Rojo significa peso cercano a 1 y el azul cercano a 0.}}
+\includegraphics[width=0.9\textwidth]{IMG/weights.png}
+     \caption{\new{Vértices de la malla de tetraedros que muestran la influencia de cada hueso o conjunto de huesos. Las zonas con color rojo toman valores de peso cercano a 1 y las zonas de color azul los pesos son cercanos a 0.}}
       \label{fig:pesado}
 \end{figure}
  
-Como resultado del desarrollo, en la figura \ref{fig:pesado} se observa como ejemplo la influencia de la caja torácica, el húmero y el fémur en los vértices de la malla de tetraedros. Las zonas rojas muestran valores de influencia cercanos a 1 y las zonas azules cercanas a 0. 
-
-
-
-
-
+\new{En la figura \ref{fig:pesado} se puede observar el resultado de adaptar la difusión de los pesos como lo haría la temperatura utilizando la ecuación del calor \ref{diffusion}. Se muestra  como ejemplo la influencia de la caja torácica, el húmero y el fémur en los vértices de la malla de tetraedros.
+Las zonas rojas muestran valores cercanos a 1 donde la influencia de los huesos es mayor y las zonas azules muestran valores cercanos a 0 donde el hueso no ejerce ninguna influencia. Las transiciones son suaves y se ilustran en las zonas verdosas. }
+\todo{La idea esta bien pero la redacción es mejorable. Reescribe las dos frases.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Mapeado}
 \label{posing:Mapeado}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-Para poder transferir los movimientos de las articulaciones virtuales a los tejidos del modelo, hace falta relaciona cada vértice de las mallas superficiales con un tetraedro. Esto consigue que el campo de desplazamientos definido por la malla de tetraedros sea trasladado a todos los tejidos que se pretendan animar.\todo{Tus frases no suenan naturales}
+Para poder transferir los movimientos de las articulaciones virtuales a los tejidos del modelo, hace falta relacionar cada vértice de sus correspondientes mallas superficiales con un tetraedro de la malla volumétrica. \new{Para ello, es necesario conocer la posición del vértice dentro del tetraedro en el que recaiga. Se calculan sus coordenadas baricéntricas para, de esta manera, permitir transferir el campo de desplazamientos definido por la malla de tetraedros a los tejidos internos que contenga el paciente virtual.} 
+\todo{Esta frase no suena natural.}
 
-Se puede parametrizar la posición del vértice que ocupa dentro de su tetraedro asociado con ayuda de las coordenadas baricéntricas. Estas coordenadas indican la influencia de cada uno de los vértices del tetraedro al vértice que esta mapeado. Por tanto, hay que calcular cada una de las coordenadas baricéntricas para cada vértice de las mallas superficiales.
 
-El enfoque más simple es comprobar cada $n$ vértices con cada $m$ tetraedros. Eso significa que la complejidad de comprobar uno a uno es de $\mathcal{O}(n\ m)$. Para acelerar el cálculo global, se ha utilizado la técnica \emph{Spatial Hashing}\cite{Teschner2003}. \new{Esta técnica subdivide el espacio en regiones cúbicas, y se introducen los tetraedros que esten dentro de ese espacio en una \ac{tabla hash} que permite un acceso de complejidad $\mathcal{O}(1)$. En vez de comprobar si el vértice esta dentro de un tetraedro uno por uno, esta técnica permite comprobar solo aquellos tetraedros que se encuentran en la misma subdivisión espacial.  De esta manera se ha reducido el tiempo que tarda el método de fuerza bruta desde horas a menos de un minuto. En el caso de que algún vértice quedará fuera de la malla de tetraedros, la misma \ac{tabla hash} puede facilitar la búsqueda del tetraedro más cercano en las regiones adyacentes.}
+
+
+%\new{Para calcular la influencia de los pesos de los teatraedros, se utiliza la posición del vértice que ocupa dentro de su tetraedro. Entonces, se utilizar ayuda de las coordenadas baricéntricas. }
+%\todo{??????}
+%
+%Estas coordenadas indican la influencia de cada uno de los vértices del tetraedro al vértice que esta mapeado.
+%Por tanto, hay que calcular cada una de las coordenadas baricéntricas para cada vértice de las mallas superficiales.
+%\todo{De verdad que no puedo reescribir nada porque no se lo que quieres decir. Por favor rehaz todo el apartado con cuidado y ligando las ideas.}
+
+
+Para encontrar el tetraedro que contiene al vértice de las mallas superficiales, el enfoque más simple es comprobar cada uno de los $n$ vértices con cada uno de los $m$ tetraedros. 
+%
+%\todo{La palabra significa suena raro en este contexto. La frase enter es rarr}
+\new{Este método es muy costoso, ya que la complejidad de comprobar uno a uno es de $\mathcal{O}(n \ m)$. Para acelerar el cálculo global, se ha utilizado la técnica \emph{Spatial Hashing}\cite{Teschner2003}. Esta técnica subdivide el espacio en regiones cúbicas, y se introducen los tetraedros que estén dentro de ese espacio en una \ac{tabla hash} que permite un acceso de complejidad $\mathcal{O}(1)$. En vez de comprobar si el vértice esta dentro de un tetraedro uno por uno, esta técnica permite comprobar solo aquellos tetraedros que se encuentran en la misma subdivisión espacial.  De esta manera se ha reducido el tiempo que tarda el método de fuerza bruta desde horas a menos de un minuto. En el caso de que algún vértice quedará fuera de la malla de tetraedros, la misma \ac{tabla hash} puede facilitar la búsqueda del tetraedro más cercano en las regiones adyacentes.}
 %\todo{No esta bien explicado}
 
 
@@ -249,32 +329,32 @@ El enfoque más simple es comprobar cada $n$ vértices con cada $m$ tetraedros. 
 \label{posing:Poses}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-En esta etapa, el usuario es el encargado de seleccionar interactivamente la posición que se quiera trasladar al personaje virtual. El algoritmo desarrollado en esta tesis permite usar cinemática directa, poses pregrabadas y animaciones, incluso usar el dispositivo \emph{Microsoft Kinect}~\cite{shotton2013} para capturar la pose del usuario y transferirla al paciente virtual. Aun así, técnicas como \emph{retargeting} \cite{7581666} o cinemática inversa, podrían ser añadidas en el futuro. %ser incluidas en el algoritmo.
+Otro de los objetivos propuestos para este algoritmo es permitir a un médico dirija y supervise la deformación del paciente virtual de manera interactiva. %A su vez, puede guardar posturas interesantes que permitan animar los modelos automáticamente en un futuro.
+En esta etapa, el usuario es el encargado de seleccionar la postura del modelo anatómico. Para ello, el algoritmo propuesto permite usar cinemática directa, poses pregrabadas, animaciones, e incluso usar el dispositivo \emph{Microsoft Kinect}~\cite{shotton2013} para capturar la pose del usuario y transferirla al paciente virtual. Aun así, técnicas como \emph{retargeting} \cite{7581666} o cinemática inversa, podrían ser añadidas en el futuro. %ser incluidas en el algoritmo.
 \todo{el pueden ser incluidas suena mal.}
 
-Para transferir la animación esqueletal a una malla superficial se utilizan diferentes algoritmos de \emph{skinning} (ver sec.\ref{art:skinning}).
-%\todo{el skinning no es un modelo matematico, son los algoritmos que transfieren el movimiento de los usos... Tal y como esta redacto parece que en el estado del arte has anticipado que TU ALGORITMO USARA EL SKINNING}.
-
+En la animación esqueletal, para transferir el movimiento del esqueleto virtual a la malla superficial se pueden utilizar diferentes algoritmos de \emph{skinning} (ver sec.\ref{art:skinning}). %\todo{el skinning no es un modelo matematico, son los algoritmos que transfieren el movimiento de los usos... Tal y como esta redacto parece que en el estado del arte has anticipado que TU ALGORITMO USARA EL SKINNING}.
 %En el caso del algoritmo propuesto, se puede tratar los vértices de los tetraedros como vértices de una malla superficial\new{????}. De la misma manera que la animación clásica las animaciones esqueletales son transferidas a la malla volumétrica usando una técnica de \emph{skinning}. Los tetraedros deformados definen un campo de deformación que se utiliza para animar todos los tejidos del paciente virtual.
-\new{En el caso del algoritmo propuesto, las técnicas de  \emph{skinning} se aplicarán a los vértices de la malla de tetraedros. Los vértices del resto de tejidos del modelo serán transformados gracias al campo de desplazamientos. Este se obtendrá de forma implícita interpolando el desplazamiento de los vértices en el interior de los tetraedros. Mediante el uso de coordenadas baricéntricas, se traslada el movimiento de los tetraedros a los vértices de todos los tejidos del paciente virtual.}
+\new{En el caso del algoritmo propuesto, las técnicas de  \emph{skinning} se aplicarán a los vértices de la malla de tetraedros en lugar de ser aplicadas directamente a las mallas superficiales. Los vértices del resto de tejidos del modelo serán transformados gracias al campo de desplazamientos. Este se obtendrá de forma implícita interpolando el desplazamiento de los vértices en el interior de los tetraedros. Mediante el uso de coordenadas baricéntricas, se traslada el movimiento de los tetraedros a los vértices de todos los tejidos del paciente virtual.}
 
 %\todo{A partir de ahora solo voy a dar pinceladas. Llevo la mañana del viernes, la del sabado y la del domingo y no avanzo. No puedo comentar cada frase. Es TU RESPONSABILIDAD cuidar la redacción. }
 
 
-Se ha elegido implementar la técnica de \emph{skinning} descrita en \cite{le2016real}. \new{Se ha decidido usar la técnica \ac{COR} ya que resuelve algunos de los problemas de \ac{DQS} y \ac{LBS} descritos en la sección\ref{art:skinning}.} \emph{Le y Hodghins} calcula unos centros de rotación óptimos para todos los vértices de la malla. %En este caso, es necesario  de tetraedros\todo{paredce que son ellos trabajan con mallas de tetrahedros}. 
+Se ha elegido implementar la técnica de \emph{skinning} descrita en \cite{le2016real}. \new{Se ha decidido usar la técnica \acl{COR} ya que resuelve algunos de los problemas de \ac{DQS} y \ac{LBS} descritos en la sección \ref{art:skinning}.} \emph{Le y Hodghins} calcula unos centros de rotación óptimos para todos los vértices de la malla. %En este caso, es necesario  de tetraedros\todo{paredce que son ellos trabajan con mallas de tetrahedros}. 
 Una vez esta información es calculada, esta técnica no afecta al rendimiento del sistema en comparación con las técnicas más utilizadas \ac{LBS} y \ac{DQS}. %Estas tres técnicas son intercambiables entre si debido a que están perfectamente diseñadas para usarse con las arquitecturas gráficas modernas.
-Este algoritmo se basa en que los vértices con un pesado similar deben seguir las mismas transformaciones que sus vecinos. \new{En su trabajo, \emph {Le y Hodgins} ~\cite{le2016real} proponen una función de similaridad con la que ponderar la contribución de los vecinos según lo parecidos que sean los pesos. Con la finalidad de adaptar la formulación de una malla de triángulos a una malla de tetraedros, se van a mostrar a continuación todos los cambios realizados:}
+Este algoritmo se basa en que los vértices con un pesado similar deben seguir las mismas transformaciones que sus vecinos. \new{En su trabajo, \emph {Le y Hodgins} ~\cite{le2016real} proponen una función de similaridad (eq. \ref{similarity}) con la que ponderar la contribución de los vecinos según lo parecidos que sean los pesos. Con la finalidad de adaptar la formulación de una malla de triángulos a una malla de tetraedros, se van a mostrar a continuación todos los cambios realizados:}
 %\todo{pasivas, intercambiables????}
 
 %\begin{eqnarray}\nonumber
 \begin{equation}
+\label{similarity}
  s(\textbf{w}_p,\textbf{w}_s) = 
 \sum_{\forall i \neq j} w_{p,i}w_{p,j}w_{s,i}w_{s,j}\exp-\frac{(w_{p,i}w_{s,j}-w_{s,i}w_{p,j})^2}{\sigma^2}
 \end{equation}
 %\end{eqnarray}
 \normalsize
 %
-donde $\textbf{w}_p$ y $\textbf{w}_s$ son vectores de los pesos de los vértices $p$ y $s$, y $\sigma$ parametriza la función exponencial. El valor de $\sigma$ que se utiliza es $0.1$ .Esta función se usa para calcular el nuevo centro de rotación. \new{De la misma manera, es necesario adaptar la ecuación propuesta en \cite{le2016real} para calcular los centros de rotación. En la ecuación se utiliza la función de similitud anteriormente citada pero teniendo en cuenta que un vértice ahora tendrá los cuatro vecinos que forman el tetraedro. También se intercambia el área del triángulo por el volumen del tetraedro vecino. Así la ecuación se quedará de la siguiente manera}: 
+donde $\textbf{w}_p$ y $\textbf{w}_s$ son vectores de los pesos de los vértices $p$ y $s$, y $\sigma$ parametriza la función exponencial. El valor de $\sigma$ que se utiliza es $0.1$ .Esta función se usa para calcular el nuevo centro de rotación. \new{De la misma manera, es necesario adaptar la ecuación propuesta en \cite{le2016real} para calcular los centros de rotación. En la ecuación se utiliza la función de similitud anteriormente citada pero teniendo en cuenta que, ahora, un vértice tendrá los cuatro vecinos que forman el tetraedro, en lugar de los tres vecinos que formaban un triángulo. También se intercambia el área del triángulo por el volumen del tetraedro vecino. Así la ecuación se quedará de la siguiente manera}: 
 %
 \begin{equation}
 %\begin{eqnarray}\nonumber
@@ -313,7 +393,7 @@ Finalmente, para animar los vértices de cada malla, el campo de desplazamiento 
 % %
 
 %Los resultados de la etapa previa son visualmente realistas\todo{¿Como lo sabes?}. \ac{COR} reduce el volumen ganado por \ac{DQS} o el volumen perdido por \ac{LBS}\todo{tienes resultados que lo respalden}. Aun así, hay algunos escenarios dónde se produce un cambio apreciable de volumen.El algoritmo propuesto permite al usuario refinar la solución usando un algoritmo basado en físicas
-\new{Aunque se haya decidido utilizar un enfoque geométrico, adicionalmente, se ha propuesto utilizar un modelo basado en físicas que permita al usuario refinar el resultado obtenido. Al no disponer de todos los tejidos o de las propiedades mecánicas, el objetivo de esta etapa no es conseguir un solución realista sino, mejorar el aspecto visual del resultado. Sin las descripciones mecánicas de los tejidos, se ha propuesto una solución que busca la conservación del volumen de cada tetraedro}
+\new{Aunque se haya decidido utilizar un enfoque geométrico para el algoritmo, adicionalmente, se ha propuesto utilizar un modelo basado en físicas que permita al usuario refinar el resultado obtenido. Sin las descripciones mecánicas de los tejidos, se ha propuesto una solución que busca la conservación del volumen de cada tetraedro. Al no disponer de todos los tejidos o de las propiedades mecánicas, el objetivo de esta etapa no es conseguir un solución realista sino, mejorar el aspecto visual del resultado. }
 
 %se puede decir que todos los tejidos están compuestos de agua y se asume que es un fluido incompresible y por tanto, las deformaciones tienen que permitir la conservación de volumen para cada tetraedro.}
 
@@ -322,16 +402,18 @@ Finalmente, para animar los vértices de cada malla, el campo de desplazamiento 
 %\todo{Si eres capaz de explicarlo...}
 
 
-Para resolver la conservación del volumen de cada tetraedro se plantea el siguiente modelo mecánico que se caracteriza por: plantear las ecuaciones del equilibrio estático, emplear el tensor de deformaciones de \emph{Cauchy} y emplear un modelo de elasticidad isotrópico, homogéneo y lineal. \new{Sin embargo, utilizar un tensor de deformación lineal puede introducir deformaciones incorrectas. Debido a su naturaleza lineal, las rotaciones generan distorsiones en la geometría al interpretarlas como deformaciones, produciendo efectos de escalado o abultamientos. Para resolver esta problemática, se utilizará la formulación co-rotacional del \ac{FEM} para resolver el sistema. La volumetrización del modelo (sec. \ref{posing:volumetrizacion}) se utiliza como discretización espacial y las posiciones de los huesos como las condiciones de contorno necesarias para resolver el problema estático. Para más información se puede consular \cite{Muller2004}.} 
+Para resolver la conservación del volumen de cada tetraedro se plantea el siguiente modelo mecánico que se caracteriza por: plantear las ecuaciones del equilibrio estático, emplear el tensor de deformaciones de \emph{Cauchy} y emplear un modelo de elasticidad isotrópico, homogéneo y lineal. \new{Sin embargo, utilizar este tipo de tensor de deformación lineal puede introducir deformaciones incorrectas. Debido a su naturaleza lineal, las rotaciones generan distorsiones en la geometría al interpretarlas como deformaciones, produciendo efectos de escalado o abultamientos. Para resolver esta problemática, se utilizará la formulación co-rotacional del \ac{FEM} para resolver el sistema. La volumetrización del modelo (sec. \ref{posing:volumetrizacion}) se utiliza como discretización espacial y las posiciones de los huesos como las condiciones de contorno necesarias para resolver el problema estático. Para más información se puede consular \cite{Muller2004}.} 
 
 \todo{No es el Fem lo que se configura}
-\new{Con la intención de controlar el modelo elástico planteado, se utilizan los parámetros \emph{ratio de Poisson} y \emph {módulo de Young}. Para ajustar y garantizar la conservación del volumen se utiliza un valor ligeramente inferior a 0.5 para asegurar la estabilidad numérica. El comportamiento del material elástico se caracteriza utilizando el \emph {módulo de Young}.  En este caso, este parámetro no será especialmente importante debido solo se busca la solución en equilibrio. En este caso será útil elegir un valor con el objetivo de mejorar la estabilidad numérica del sistema. Para ello se ha analizado la matriz de coeficientes del sistema para varios valores del módulo y se ha seleccionado aquel valor que consiga la matriz de coeficientes con menor número condicionante.}
+\new{Con la intención de controlar el modelo elástico planteado, se utilizan los parámetros \emph{ratio de Poisson} y \emph {módulo de Young}. }
+
+\new{Para ajustar y garantizar la conservación del volumen se utiliza un valor de \emph{ratio de Poisson} ligeramente inferior a 0.5 para asegurar la estabilidad numérica. Por otro lado, el comportamiento del material elástico se caracteriza utilizando el \emph {módulo de Young}. En este caso, este parámetro no será especialmente importante debido solo se busca la solución en equilibrio. Por tanto, será útil elegir un valor con el objetivo de mejorar la estabilidad numérica del sistema. Para ello se ha analizado la matriz de coeficientes del sistema para varios valores del módulo y se ha seleccionado aquel valor que consiga la matriz de coeficientes con menor número condicionante.}
 
 Respecto a la formulación co-rotacional se basa en calcular en una configuración no rotada las fuerzas internas (derivadas de la deformación) y que se usarán después rotándolas a la configuración final \cite{Muller2004}. Primero, es necesario calcular la rotación de los elementos de la malla de tetraedros. Como esta rotación se desconoce, el problema estático se puede resolver de forma iterativa. Se utiliza la deformación seleccionada por el usuario como situación inicial para reducir significativamente el número de iteraciones requeridas para llegar a la solución final.  %(ver Fig. \ref{x}). 
 
 Para conocer los desplazamientos de los vértices de la malla de tetraedros se ha formulado un sistema de ecuaciones lineales. Según las propiedades anteriormente citadas, la matriz de coeficientes del sistema lineal es dispersa, simétrica y definida positiva. Este tipo de sistemas de ecuaciones se pueden resolver utilizando el método del gradiente conjugado \cite{Press2007}. La convergencia de estos métodos se acelera con el uso de pre-condicionadores (ver \cite{hauth2003}) además de utilizar como punto de partida la posición del modelo ya calculado en la etapa de selección de poses. %Para acelerar esta etapa, se utiliza  como solución inicial la posición del modelo ya calculado en la etapa de selección de poses (sec. \ref{posingPoses}), además de emplear un precondicionador de Jacobi.
 
-Finalmente, se utilizarán los desplazamientos realizados por los tetraedros para calcular la transformación que se aplicará a todos los tejidos asociados (ver sec. \ref{posing:Poses}). 
+Finalmente, se utilizarán los desplazamientos realizados por los tetraedros para calcular la transformación que se aplicará a todos los tejidos asociados como se ha detallado en la sección \ref{posing:Poses}.% (ver sec. \ref{posing:Poses}). 
 
 
 
