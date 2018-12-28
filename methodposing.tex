@@ -18,7 +18,7 @@ La idea que subyace bajo esta aproximación es que el número de grados de liber
 Tal y como se comenta en la sección \ref{art:animation}, en la bibliografía existen distintas técnicas que pretenden automatizar algunas de las etapas de este cauce, pero no están diseñadas para lidiar con modelos que contengan estructuras anatómicas internas. \new{Por consiguiente,} En este trabajo de tesis, se propone como adaptar el cauce de la animación esqueletal clásica de forma que se pueda aplicar a modelos anatómicos de forma automática. 
 %\del{En lugar de utilizar las técnicas clásicas de animación esqueletal, se ha propuesto una nueva manera novedosa de animar anatomías de personajes de manera eficiente, ya que para animar todos los tejidos de forma separada implicaría que habría que realizar las etapas de la animación para cada tejido de manera independiente y que no se podría asegurar que se generaran auto colisiones entre ellos.}
 
-La idea principal que hay detrás del algoritmo propuesto es\new{,la de} calcular un campo de desplazamientos continuo a partir del movimiento de los huesos
+La idea principal que hay detrás del algoritmo propuesto es calcular un campo de desplazamientos continuo a partir del movimiento de los huesos
 %\todo{si no es continuo todo lo que dices a continuación no sirve}
 en el interior del paciente virtual y utilizarlo para transformar sus estructuras internas. Esto permite deformar los tejidos de forma independiente y\del{,} aun así, garantizar que estos se muevan solidariamente, asegurando que no se produzcan colisiones y/o autocolisines, siempre y cuando estos estén muestreados con la suficiente resolución. 
 %\del{ solidaria sin necesidad de realizar cálculos independientes y asegurar de esta manera que no se producirá nuevas colisiones.} 
@@ -469,9 +469,28 @@ Para ello\new{,} se ha analizado la matriz de coeficientes del sistema para vari
 
 La formulación co-rotacional calcula las fuerzas internas (aquellas derivadas de la deformación)\new{,} tras deshacer las rotaciones de cada elemento de la malla. Después, rotará las fuerzas para ajustarlas a la configuración final del elemento~\cite{Muller2004}. Dado que esta técnica necesita conocer la rotaciones finales que se aplican a cada elemento de la malla, el problema estático se ha de resolver de forma iterativa. Para acelerar la convergencia del algoritmo, se utiliza la deformación seleccionada por el usuario como situación inicial reduciendo  significativamente el número de iteraciones requeridas para llegar a la solución final.  %(ver Fig. \ref{x}). 
 
-Para conocer los desplazamientos de los vértices de la malla de tetraedros se ha formulado un sistema de ecuaciones lineales. Según las propiedades anteriormente citadas, la matriz de coeficientes del sistema lineal es dispersa, simétrica y definida positiva. Este tipo de sistemas de ecuaciones se pueden resolver utilizando el método del gradiente conjugado \cite{Press2007}. La convergencia de estos métodos se acelera con el uso de pre-condicionadores (ver \cite{hauth2003}). En el caso planteado, se utiliza un precondicionador de \emph{Jacobi} y, además,  como solución incial se utiliza la posición del modelo calculada en la etapa de \emph{skinning}. %Para acelerar esta etapa, se utiliza  como solución inicial la posición del modelo ya calculado en la etapa de selección de poses (sec. \ref{posingPoses}), además de emplear un precondicionador de Jacobi.
+Para conocer los desplazamientos de los vértices de la malla de tetraedros se ha formulado un sistema de ecuaciones lineales. Según las propiedades anteriormente citadas, la matriz de coeficientes del sistema lineal es dispersa, simétrica y definida positiva. Este tipo de sistemas de ecuaciones se pueden resolver utilizando el método del gradiente conjugado \cite{Press2007}. La convergencia de estos métodos se acelera con el uso de pre-condicionadores (ver \cite{hauth2003}). En el caso planteado, se utiliza un precondicionador de \emph{Jacobi} y, además, como solución inicial se utiliza la posición del modelo calculada en la etapa de \emph{skinning}. %Para acelerar esta etapa, se utiliza  como solución inicial la posición del modelo ya calculado en la etapa de selección de poses (sec. \ref{posingPoses}), además de emplear un precondicionador de Jacobi.
 
 Finalmente, se utilizarán los desplazamientos de los vértices de los tetraedros para calcular la transformación que se aplicará a todos los tejidos asociados a cada elemento de la malla volumétrica, como se ha detallado en la sección \ref{posing:Poses}.% (ver sec. \ref{posing:Poses}). 
+
+\subsection{Animación de representaciones volumétricas}
+\label{posing:animvol}
+
+\begin{figure*}[!ht]%[b]%[b!ht]
+   \centering
+   \includegraphics[width=0.90\textwidth]{IMG/Volumetric}
+    \caption{Proceso de animación para modelo volumétrico. De izquierda a derecha: (1) modelo volumétrico en reposo, (2) malla de tetraedros generada, (3) malla de tetraedros representando el peso del fémur como ejemplo (rojo significa influencia cerca de 1, azul influencia 0) y (4) malla de tetraedros superpuesta al modelo volumétrico deformado. }
+    \label{fig:volEx}
+\end{figure*}
+\todo{explica el por qué: el campo de desplazamientos, me he traido esto para inspirarme}
+
+Como se puede leer en la sección 
+\ref{posing:method}, el algoritmo se basa en el cálculo de un campo de desplazamientos continuo (ver sec. \ref{posing:volumetrizacion}) %\todo{si no es continuo todo lo que dices a continuación no sirve}
+en el interior del paciente virtual que permita transformar sus estructuras internas. Esto permite deformar los tejidos de forma independiente y, aun así, garantizar que estos se muevan solidariamente. Se ha decido deformar los tetraedros y posteriormente interpolar el movimiento a los vértices usando las coordenadas baricéntricas, en lugar de transferir los pesos calculados (ver sec. \ref{posing:Pesado}) de los tetraedros a los vértices interiores. 
+De esta forma, el campo de desplazamientos definido se puede usar para transformar tanto vértices de representaciones superficiales como \emph{vóxeles} en modelos volumétricos. 
+
+
+\new{En la figura \ref{fig:volEx} se muestra los pasos para obtener una deformación de una representación volumétrica. En primer lugar, se genera la malla de tetraedros del modelo utilizando la misma técnica explicada en la sección \ref{posing:volumetrizacion}  y se calculan los pesos como se detalló en la sección \ref{posing:pesado}. A partir de esta \emph{tetraedrización}, se definen una serie de \emph{píxeles} dentro de cada tetraedro en la posición deformada. Se mapean con la configuración de reposo utilizando la transformación inversa del campo de desplazamiento. Para ello, se itera sobre cada caja contenedora de la \ac{tabla hash} y se utilizan las coordenadas baricéntricas. Este proceso, al ser fácilmente paralelizable en \ac{GPU}, permite que se pueda \emph{renderizar} en tiempo real.}
 
 
 
