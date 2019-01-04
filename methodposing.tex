@@ -71,7 +71,7 @@ A continuación\new{,} se detallan las etapas en las que se divide el algoritmo 
 %\todo{hazla más grande}
 \begin{figure*}[!th]
    \centering
-    \includegraphics[width=0.95\textwidth]{IMG/resumen.eps}%[width=0.95\textwidth]
+    \includegraphics[width=\textwidth]{IMG/resumen.eps}%[width=0.95\textwidth]
     \caption{Perspectiva general del algoritmo propuesto.}
 		\label{fig:Resumen}
 \end{figure*}
@@ -165,12 +165,12 @@ Una vez se ha construido la imagen 3D, se utiliza para crear una malla de tetrae
 
 En este trabajo, se ha conseguido mantener el número de los tetraedros por debajo de $3.5\times 10^6$ y el número de vértices por debajo de $8 \times 10^5$. 
 %\todo{Describe la figura }
-\new{En la figura \ref{fig:tetra} se puede observar una tetraedrización del modelo \emph{ZygoteBody}$^{TM}$. Los tetraedros del interior del modelo se han coloreado de color morado, \new{quedando así} \del{pintado} con un color diferente aquellos que pertenezcan a un hueso.}
+\new{En la figura \ref{fig:tetra} se puede observar una tetraedrización del modelo \emph{ZygoteBody}$^{TM}$. Los tetraedros del interior del modelo se han coloreado de color morado, mostrando con un color diferente aquellos que pertenezcan a un hueso.}
 %
 \begin{figure}[th]
    \centering
     \includegraphics[width=0.95\textwidth]{IMG/boneid.png}
-     \caption{Cortes coronales, sagitales y axiales mostrando el resultado de la tetraedrización. Los tetraedros morados representan el interior del modelo, \new{configurado con} \del{ mostrando con} diferentes colores los tetraedros etiquetados como hueso.}
+     \caption{Cortes coronales, sagitales y axiales mostrando el resultado de la tetraedrización. Los tetraedros morados representan el interior del modelo, mientras con diferentes colores se muestran los tetraedros etiquetados como hueso.}
 \label{fig:tetra}
 \end{figure} 
 %\todo{Falta el color violeta}
@@ -181,7 +181,7 @@ En este trabajo, se ha conseguido mantener el número de los tetraedros por deba
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 Como se ha introducido en el estado del arte (ver sección \ref{art:pesado}), la etapa de pesado es donde se calcula como influye el movimiento de cada hueso sobre los vértices de la malla.
-Tradicionalmente, esta etapa se realiza de forma manual por un artista ayudados por una herramienta \new{de} \ac{CAD}. Aun así, existen técnicas que pueden automatizar el proceso con ciertas restricciones. \emph{Baran y Popovi\'{c}} proponen en \cite{Baran:2007}\del{,} una técnica de pesado automática donde se asume que el esqueleto virtual tiene forma de modelo de alambre y la malla superficial contiene completamente dicho esqueleto.
+Tradicionalmente, esta etapa se realiza de forma manual por un artista ayudados por una herramienta  \ac{CAD}. Aun así, existen técnicas que pueden automatizar el proceso con ciertas restricciones. \emph{Baran y Popovi\'{c}} proponen en \cite{Baran:2007} una técnica de pesado automática donde se asume que el esqueleto virtual tiene forma de modelo de alambre y la malla superficial contiene completamente dicho esqueleto.
 %\new{Es habitual encontrar que las técnicas citadas estan orientadas a utilizar mallas superficiales y utilizan una recta como representación del hueso virtual para calcular su influencia en los vértices.
 
 Esta aproximación, no es directamente aplicable al algoritmo presentado, puesto que la mayor parte de la estructuras anatómicas del paciente virtual no contienen al tejido óseo. En esta tesis, se extiende el trabajo de \emph{Baran y Popovi\'{c}} de forma que puedan utilizarse mallas volumétricas en las que el tejido óseo esté etiquetado.  
@@ -375,7 +375,7 @@ Para encontrar el tetraedro que contiene a cada vértice de las mallas superfici
 \label{posing:Poses}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-Otro de los objetivos propuestos para este algoritmo es \new{el de} permitir a un médico \new{que} dirija y supervise la deformación del paciente virtual de manera interactiva. %A su vez, puede guardar posturas interesantes que permitan animar los modelos automáticamente en un futuro.
+Otro de los objetivos propuestos para este algoritmo es permitir a un médico \new{que} dirija y supervise la deformación del paciente virtual de manera interactiva. %A su vez, puede guardar posturas interesantes que permitan animar los modelos automáticamente en un futuro.
 En esta etapa, el usuario es el encargado de seleccionar la postura del modelo anatómico. Para ello, el algoritmo propuesto permite usar cinemática directa, poses pregrabadas, animaciones, e incluso usar el dispositivo \emph{Microsoft Kinect}~\cite{shotton2013} para capturar la pose del usuario y transferirla al paciente virtual. Aun así, técnicas como \emph{retargeting} \cite{7581666} o cinemática inversa, podrían añadidase en el futuro. %ser incluidas en el algoritmo.
 \todo{incluir imagen.}
 
